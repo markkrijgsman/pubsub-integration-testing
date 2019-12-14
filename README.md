@@ -85,11 +85,13 @@ docker logs -f pubsub
 ### Making the application configurable
 
 What remains is configuring the publisher and subscriber Java classes to connect with the locally running Pub/Sub server.
+Note that the code examples below use the configuration object [PubSubConfig](src/main/java/nl/luminis/articles/pubsub/PubSubConfig) and that the examples are not 100% complete.
+Please refer to the code repository for the complete listing.
 
-Given a topic with the name `my-topic` and a subscription with the name `my-subscription`, the minimal setup of a publisher and subscriber is as follows:
+Given a topic with the name `my-topic` and a subscription with the name `my-subscription`, the minimal setup of a [publisher](src/main/java/nl/luminis/articles/pubsub/publisher/DummyMessagePublisher) and [subscriber](src/main/java/nl/luminis/articles/pubsub/subscriber/DummyMessageSubscriber) is as follows:
 
 ```
-Publisher
+Publisher publisher = Publisher
     .newBuilder(projectTopicName)
     .build();
 ```
@@ -106,7 +108,7 @@ If you are using service account credentials, you will also have to set the prop
 This JSON file can be retrieved from GCP in the IAM section.
 
 ```
-    public CredentialsProvider createCredentialsProvider() {
+    public CredentialsProvider create() {
         switch (pubSubConfig.getAuthenticationMethod()) {
             case NONE:
                 return getNoCredentialsProvider();
@@ -176,4 +178,4 @@ or checkout this [Pub/Sub integration test](src/test/java/nl/luminis/articles/pu
 [4]: https://cloud.google.com/pubsub/docs/subscriber
 [5]: https://cloud.google.com/pubsub/docs/emulator
 [6]: https://github.com/markkrijgsman/pubsub-integration-testing
-[7]: localhost:8080/swagger-ui.html
+[7]: http://localhost:8080/swagger-ui.html

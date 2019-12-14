@@ -22,7 +22,7 @@ public class CredentialsProviderFactory {
         this.pubSubConfig = pubSubConfig;
     }
 
-    public CredentialsProvider createCredentialsProvider() {
+    public CredentialsProvider create() {
         switch (pubSubConfig.getAuthenticationMethod()) {
             case NONE:
                 return getNoCredentialsProvider();

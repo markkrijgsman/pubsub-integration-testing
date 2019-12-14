@@ -28,7 +28,7 @@ public class SubscriberFactory {
 
         Subscriber subscriber = Subscriber
             .newBuilder(subscriptionName, messageReceiver)
-            .setCredentialsProvider(credentialsProviderFactory.createCredentialsProvider())
+            .setCredentialsProvider(credentialsProviderFactory.create())
             .setChannelProvider(channelProviderFactory.create())
             .build();
 

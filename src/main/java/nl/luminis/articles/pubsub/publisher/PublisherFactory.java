@@ -19,7 +19,6 @@ public class PublisherFactory {
     public PublisherFactory(CredentialsProviderFactory credentialsProviderFactory, TransportChannelProviderFactory channelProviderFactory) {
         this.credentialsProviderFactory = credentialsProviderFactory;
         this.channelProviderFactory = channelProviderFactory;
-
     }
 
     public Publisher build(ProjectTopicName projectTopicName) {
@@ -27,7 +26,7 @@ public class PublisherFactory {
         try {
             return Publisher
                 .newBuilder(projectTopicName)
-                .setCredentialsProvider(credentialsProviderFactory.createCredentialsProvider())
+                .setCredentialsProvider(credentialsProviderFactory.create())
                 .setChannelProvider(channelProviderFactory.create())
                 .build();
         } catch (IOException e) {
