@@ -88,7 +88,7 @@ What remains is configuring the publisher and subscriber Java classes to connect
 Note that the code examples below use the configuration object [PubSubConfig](src/main/java/nl/luminis/articles/pubsub/PubSubConfig.java) and that the examples are not 100% complete.
 Please refer to the code repository for the complete listing.
 
-Given a topic with the name `my-topic` and a subscription with the name `my-subscription`, the minimal setup of a [publisher](src/main/java/nl/luminis/articles/pubsub/publisher/DummyMessagePublisher) and [subscriber](src/main/java/nl/luminis/articles/pubsub/subscriber/DummyMessageSubscriber) is as follows:
+Given a topic with the name `my-topic` and a subscription with the name `my-subscription`, the minimal setup of a [publisher](src/main/java/nl/luminis/articles/pubsub/publisher/DummyMessagePublisher.java) and [subscriber](src/main/java/nl/luminis/articles/pubsub/subscriber/DummyMessageSubscriber.java) is as follows:
 
 ```
 Publisher publisher = Publisher
