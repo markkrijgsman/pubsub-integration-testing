@@ -1,4 +1,4 @@
-package nl.luminis.article.pubsub.auth;
+package nl.luminis.articles.pubsub.auth;
 
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import nl.luminis.article.pubsub.PubSubConfig;
+import nl.luminis.articles.pubsub.PubSubConfig;
 import org.springframework.stereotype.Service;
 
 @Service

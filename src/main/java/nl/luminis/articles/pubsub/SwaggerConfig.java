@@ -1,4 +1,4 @@
-package nl.luminis.article.pubsub;
+package nl.luminis.articles.pubsub;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("nl.luminis.article"))
+            .apis(RequestHandlerSelectors.basePackage("nl.luminis.articles"))
             .paths(PathSelectors.any())
             .build();
     }

@@ -1,11 +1,11 @@
-package nl.luminis.article.pubsub.auth;
+package nl.luminis.articles.pubsub.auth;
 
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.rpc.FixedTransportChannelProvider;
 import com.google.api.gax.rpc.TransportChannelProvider;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import nl.luminis.article.pubsub.PubSubConfig;
+import nl.luminis.articles.pubsub.PubSubConfig;
 import org.springframework.stereotype.Service;
 
 @Service

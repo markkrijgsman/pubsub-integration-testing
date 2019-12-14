@@ -1,4 +1,4 @@
-package nl.luminis.article.pubsub.subscriber;
+package nl.luminis.articles.pubsub.subscriber;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,8 +11,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
-import nl.luminis.article.pubsub.PubSubConfig;
-import nl.luminis.article.pubsub.dto.DummyMessage;
+import nl.luminis.articles.pubsub.PubSubConfig;
+import nl.luminis.articles.pubsub.dto.DummyMessage;
 import org.springframework.stereotype.Service;
 
 @Slf4j

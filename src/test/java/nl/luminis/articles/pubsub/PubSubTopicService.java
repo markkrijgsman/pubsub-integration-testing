@@ -1,4 +1,4 @@
-package nl.luminis.article.pubsub;
+package nl.luminis.articles.pubsub;
 
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.Instant;
 import lombok.extern.slf4j.Slf4j;
-import nl.luminis.article.pubsub.auth.TransportChannelProviderFactory;
+import nl.luminis.articles.pubsub.auth.TransportChannelProviderFactory;
 import org.springframework.stereotype.Service;
 
 @Slf4j

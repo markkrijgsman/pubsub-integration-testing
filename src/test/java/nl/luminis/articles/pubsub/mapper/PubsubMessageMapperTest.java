@@ -1,4 +1,4 @@
-package nl.luminis.article.pubsub.mapper;
+package nl.luminis.articles.pubsub.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 import java.io.IOException;
-import nl.luminis.article.pubsub.dto.DummyMessage;
+import nl.luminis.articles.pubsub.dto.DummyMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

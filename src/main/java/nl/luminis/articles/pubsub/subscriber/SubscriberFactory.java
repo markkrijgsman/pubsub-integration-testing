@@ -1,4 +1,4 @@
-package nl.luminis.article.pubsub.subscriber;
+package nl.luminis.articles.pubsub.subscriber;
 
 import com.google.api.core.ApiService;
 import com.google.api.core.ApiService.Listener;
@@ -7,8 +7,8 @@ import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.pubsub.v1.ProjectSubscriptionName;
 import lombok.extern.slf4j.Slf4j;
-import nl.luminis.article.pubsub.auth.CredentialsProviderFactory;
-import nl.luminis.article.pubsub.auth.TransportChannelProviderFactory;
+import nl.luminis.articles.pubsub.auth.CredentialsProviderFactory;
+import nl.luminis.articles.pubsub.auth.TransportChannelProviderFactory;
 import org.springframework.stereotype.Service;
 
 @Slf4j

@@ -1,12 +1,12 @@
-package nl.luminis.article.pubsub.publisher;
+package nl.luminis.articles.pubsub.publisher;
 
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.pubsub.v1.ProjectTopicName;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import lombok.extern.slf4j.Slf4j;
-import nl.luminis.article.pubsub.auth.CredentialsProviderFactory;
-import nl.luminis.article.pubsub.auth.TransportChannelProviderFactory;
+import nl.luminis.articles.pubsub.auth.CredentialsProviderFactory;
+import nl.luminis.articles.pubsub.auth.TransportChannelProviderFactory;
 import org.springframework.stereotype.Service;
 
 @Slf4j

@@ -7,7 +7,7 @@
     },
     {
       "name": "gcloud.authentication.method",
-      "type": "nl.luminis.article.pubsub.auth.AuthenticationMethod",
+      "type": "nl.luminis.articles.pubsub.auth.AuthenticationMethod",
       "description": "The method of authentication with GCP"
     },
     {

@@ -1,4 +1,4 @@
-package nl.luminis.article.pubsub.dto;
+package nl.luminis.articles.pubsub.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

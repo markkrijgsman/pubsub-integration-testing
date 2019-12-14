@@ -1,22 +1,21 @@
+## Integration testing Pub/Sub interactions in your application
+
 As part of the [Google Cloud Platform][1] (GCP), Google provides [Pub/Sub][2] as its queuing mechanism. 
 After creating a Pub/Sub topic in GCP, you can create [publishers][3] to send messages to a topic and [subscribers][4] to receive messages from a topic.
-In order to send or receive Pub/Sub messages, you can choose to authenticate with GCP through service account or user account credentials.
+In order to send or receive Pub/Sub messages from GCP, you can choose to authenticate with GCP through service account or user account credentials.
 
-Given a topic with the name `my-topic` and a subscription with the name `my-subscription`, the minimal setup of a publisher and subscriber is as follows:
+This has one disadvantage; when running your build either locally or on a build server such as Gitlab, your application will attempt to communicate with GCP for its Pub/Sub interactions.
+Your build will either fail because there are no credentials available (usually the case on build servers), 
+or it will use you personal user account credentials and publish messages to topics that may also be in use on other (test) environments. 
+Both situations are not desirable. 
 
-```
-publisher
-```
-```
-subscriber
-``` 
+In this article, I will first describe how to Dockerize Pub/Sub, followed by the changes required in your application. 
+If you want to dive right into the code, [go here][8] 
 
-All of this works perfectly fine, until we run this code on a build server such as Gitlab.
-While you have the availability of user credentials when running your application locally, Gitla has no way of authenticating with GCP. 
-This is also not desirable - we don't want our builds to send messages to topics in GCP.
+### Dockerizing the Pub/Sub server
 
 In order to still allow for a build that includes tests with Pub/Sub interactions, we are going to Dockerize the Pub/Sub server. 
-With this in place, we don't need to authenticate with GCP anymore and can actually verify the messages that go through our topics and subscriptions.
+With this in place, we don't need to authenticate with GCP anymore and can actually verify the messages that go through our topics and subscriptions without interfering on other environments.
 Google already provides us with an [emulator][5] that allows us to emulate a Pub/Sub server locally.
 Our Dockerfile is as follows:
 
@@ -36,9 +35,14 @@ CMD ["./root/bin/start-pubsub.sh"]
 ``` 
 
 As per the emulator's installation instructions, we clone the Google repository and install the Pub/Sub requirements.
-Afterwards, we execute `start-pubsub.sh`:
+Afterwards, we execute [start-pubsub.sh](src/test/resources/docker/start-pubsub.sh):
 ```
 #!/bin/bash
+
+if [[ -z "${PUBSUB_PROJECT_ID}" ]]; then
+  echo "No PUBSUB_PROJECT_ID supplied, setting default project name"
+  export PUBSUB_PROJECT_ID=gcp-docker-project
+fi
 
 export PUBSUB_EMULATOR_HOST=localhost:8432
 
@@ -58,35 +62,13 @@ echo "[pubsub] Ready"
 wait ${PUBSUB_PID}
 ```    
 
-This script indicates that we need to provide our Docker container with two environment variables:
-* PUBSUB_PROJECT_ID: optional GCP project ID
-* PUBSUB_CONFIG: a JSON object that describes the topics and subscriptions you want to create
+This script indicates that we can provide the Docker container with two optional environment variables:
+* PUBSUB_PROJECT_ID: GCP project ID
+* PUBSUB_CONFIG: a JSON object that describes the topics and subscriptions you want to create. 
+ 
+With this script, we start the Pub/Sub server at http://localhost:8432 and execute a simple Python script ([pubsub-configuration-parser.py](src/test/resources/docker/pubsub-configuration-parser.py)) that interprets the JSON object.
 
-With this script, we start our Pub/Sub server at http://localhost:8432 and execute a simple Python script that interprets the JSON object:
-```
-import json
-import sys
-
-# This assumes that the Google Pub/Sub repository has been cloned in the current directory.
-sys.path.append('python-docs-samples/pubsub/cloud-client')
-import publisher
-import subscriber
-
-project = sys.argv[1]
-try:
-    pubsubConfig = json.loads(sys.argv[2])
-    for topic in pubsubConfig:
-        publisher.create_topic(project, topic["name"])
-        for subscription in topic["subscriptions"]:
-            subscriber.create_subscription(project, topic["name"], subscription)
-
-except:
-    print("Failed to parse JSON Pub/Sub configuration, please verify the input:")
-    print(sys.argv[2])
-    raise
-``` 
-
-Building and running this Dockerfile gives us the following:
+Building and running the [Dockerfile](src/test/resources/docker/Dockerfile) can be done as follows:
 ```
 docker build . -t pubsub
 docker run  --name pubsub \
@@ -96,26 +78,100 @@ docker run  --name pubsub \
 docker logs -f pubsub 
 ```
 
-```
-Executing: /usr/lib/google-cloud-sdk/platform/pubsub-emulator/bin/cloud-pubsub-emulator --host=0.0.0.0 --port=8432
-[pubsub] This is the Google Pub/Sub fake.
+### Making the application configurable
 
-...
+What remains is configuring the publisher and subscriber Java classes to connect with the locally running Pub/Sub server.
 
-Topic created: name: "projects/my-gcp-project/topics/my-topic"
-Subscription created: name: "projects/my-gcp-project/subscriptions/my-subscription"
-topic: "projects/my-gcp-project/topics/my-topic"
-push_config {
-}
-ack_deadline_seconds: 10
-message_retention_duration {
-  seconds: 604800
-}
-[pubsub] Ready
+Given a topic with the name `my-topic` and a subscription with the name `my-subscription`, the minimal setup of a publisher and subscriber is as follows:
+
 ```
+Publisher
+    .newBuilder(projectTopicName)
+    .build();
+```
+```
+Subscriber subscriber = Subscriber
+    .newBuilder(subscriptionName, messageReceiver)
+    .build();
+``` 
+
+Both builder objects can take a `CredentialsProvider` instance that determines how we authenticate with GCP.
+
+I've created my own [CredentialsProviderFactory](src/main/java/nl/luminis/articles/pubsub/auth/CredentialsProviderFactory.java) that returns either no credentials, user credentials or service account credentials based on the Spring property `gcloud.authentication.method`.
+If you are using service account credentials, you will also have to set the property `gcloud.serviceaccount.credentials.file`, which is a reference to the JSON file that contains the actual credentials.
+This JSON file can be retrieved from GCP in the IAM section.
+
+```
+    public CredentialsProvider createCredentialsProvider() {
+        switch (pubSubConfig.getAuthenticationMethod()) {
+            case NONE:
+                return getNoCredentialsProvider();
+            case USER_ACCOUNT:
+                return getUserCredentialsProvider();
+            case SERVICE_ACCOUNT:
+                return getServiceAccountCredentials();
+            default:
+                throw new IllegalArgumentException("Unexpected authentication method " + pubSubConfig.getAuthenticationMethod());
+        }
+    }
+
+    private CredentialsProvider getNoCredentialsProvider() {
+        return NoCredentialsProvider.create();
+    }
+
+    private CredentialsProvider getUserCredentialsProvider() {
+        try {
+            return FixedCredentialsProvider.create(GoogleCredentials.getApplicationDefault());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private CredentialsProvider getServiceAccountCredentials() {
+        try (InputStream stream = Files.newInputStream(Paths.get(pubSubConfig.getServiceAccountCredentialsFile()))) {
+            ServiceAccountCredentials credentials = ServiceAccountCredentials.fromStream(stream);
+            return FixedCredentialsProvider.create(credentials);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+```
+
+Lastly, you will have to provide both the publisher and subscriber builder objects with a `TransportChanneProvider`.
+This provider will allow us to instruct Pub/Sub to use a plain text connection when we are running our application against the Dockerized Pub/Sub server.
+Furthermore, it also allows us to set the URL of the Pub/Sub server. 
+This has been made configurable through the `gcloud.pubsub.url` property, which is set to [localhost:8432][6] by default, but should be set to [pubsub.googleapis.com][7] when running in GCP.
+```
+public TransportChannelProvider create() {
+        ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder.forTarget(pubSubConfig.getPubSubUrl());
+        if (AuthenticationMethod.NONE.equals(pubSubConfig.getAuthenticationMethod())) {
+            channelBuilder.usePlaintext();
+        }
+        ManagedChannel channel = channelBuilder.build();
+        return FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+    }
+```
+
+### Different scenarios, different settings
+
+The table below shows the different scenarios that you can have when working with Pub/Sub and the appropriate property settings that go with each scenario:
+
+| Application | Pub/Sub   | gcloud.pubsub.url     | gcloud.authentication.method | gcloud.serviceaccount.credentials.file |
+|-------------|-----------|-----------------------|------------------------------|----------------------------------------|
+| localhost   | localhost | localhost:8432        | NONE                         | N/A                                    |
+| localhost   | GCP       | pubsub.googleapis.com | USER_ACCOUNT                 | N/A                                    |
+| localhost   | GCP       | pubsub.googleapis.com | SERVICE_ACCOUNT              | /path/to/credentials.json              |
+| GCP         | GCP       | pubsub.googleapis.com | SERVICE_ACCOUNT              | /path/to/credentials.json              |
+
+You can also run the [Application.java](src/main/java/nl/luminis/articles/pubsub/Application.java) and publish a message with the use of the [Swagger UI][9]
+or checkout this [Pub/Sub integration test](src/test/java/nl/luminis/articles/pubsub/PubSubIT).
 
 [1]: https://cloud.google.com
 [2]: https://cloud.google.com/pubsub/docs/overview
 [3]: https://cloud.google.com/pubsub/docs/publisher
 [4]: https://cloud.google.com/pubsub/docs/subscriber
 [5]: https://cloud.google.com/pubsub/docs/emulator
+[6]: localhost:8432
+[7]: pubsub.googleapis.com
+[8]: https://github.com/markkrijgsman/pubsub-integration-testing
+[9]: localhost:8080/swagger-ui.html

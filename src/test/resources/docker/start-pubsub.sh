@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ -z "${PUBSUB_PROJECT_ID}" ]]; then
+  echo "No PUBSUB_PROJECT_ID supplied, setting default project name"
+  export PUBSUB_PROJECT_ID=gcp-docker-project
+fi
+
 export PUBSUB_EMULATOR_HOST=localhost:8432
 
 # Start the emulator in the background so that we can continue the script to create topics and subscriptions.

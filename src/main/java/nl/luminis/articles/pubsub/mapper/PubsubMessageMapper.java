@@ -1,4 +1,4 @@
-package nl.luminis.article.pubsub.mapper;
+package nl.luminis.articles.pubsub.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

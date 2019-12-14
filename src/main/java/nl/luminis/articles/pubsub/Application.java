@@ -1,4 +1,4 @@
-package nl.luminis.article.pubsub;
+package nl.luminis.articles.pubsub;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;

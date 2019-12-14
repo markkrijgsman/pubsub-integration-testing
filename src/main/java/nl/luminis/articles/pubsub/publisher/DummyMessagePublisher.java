@@ -1,11 +1,11 @@
-package nl.luminis.article.pubsub.publisher;
+package nl.luminis.articles.pubsub.publisher;
 
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.pubsub.v1.PubsubMessage;
 import lombok.extern.slf4j.Slf4j;
-import nl.luminis.article.pubsub.PubSubConfig;
-import nl.luminis.article.pubsub.dto.DummyMessage;
-import nl.luminis.article.pubsub.mapper.PubsubMessageMapper;
+import nl.luminis.articles.pubsub.PubSubConfig;
+import nl.luminis.articles.pubsub.dto.DummyMessage;
+import nl.luminis.articles.pubsub.mapper.PubsubMessageMapper;
 import org.springframework.stereotype.Service;
 
 @Slf4j

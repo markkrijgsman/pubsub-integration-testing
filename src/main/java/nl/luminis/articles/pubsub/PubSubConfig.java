@@ -1,10 +1,10 @@
-package nl.luminis.article.pubsub;
+package nl.luminis.articles.pubsub;
 
 import com.google.pubsub.v1.ProjectSubscriptionName;
 import com.google.pubsub.v1.ProjectTopicName;
 import lombok.Getter;
 import lombok.Setter;
-import nl.luminis.article.pubsub.auth.AuthenticationMethod;
+import nl.luminis.articles.pubsub.auth.AuthenticationMethod;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
