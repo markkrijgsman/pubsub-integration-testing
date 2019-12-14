@@ -1,0 +1,34 @@
+{
+  "properties": [
+    {
+      "name": "gcloud.project.name",
+      "type": "java.lang.String",
+      "description": "The GCP project that we are hosting our service in"
+    },
+    {
+      "name": "gcloud.authentication.method",
+      "type": "nl.luminis.article.pubsub.auth.AuthenticationMethod",
+      "description": "The method of authentication with GCP"
+    },
+    {
+      "name": "gcloud.serviceaccount.credentials.file",
+      "type": "java.lang.String",
+      "description": "A file containing JSON-based service account credentials for GCP - usually set to null locally, unless you are using AuthenticationMethod.SERVICE_ACCOUNT"
+    },
+    {
+      "name": "gcloud.pubsub.url",
+      "type": "java.lang.String",
+      "description": "The URL to the Pub/Sub server, can be localhost when (integration) testing"
+    },
+    {
+      "name": "gcloud.pubsub.topic.name",
+      "type": "java.lang.String",
+      "description": "The name of the topic that we are publishing on"
+    },
+    {
+      "name": "gcloud.pubsub.subscription.name",
+      "type": "java.lang.String",
+      "description": "The name of the subscription that allows subscribing to the topic we are publishing on"
+    }
+  ]
+}
