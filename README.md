@@ -181,4 +181,4 @@ or checkout this [Pub/Sub integration test](src/test/java/nl/luminis/articles/pu
 [5]: https://cloud.google.com/pubsub/docs/emulator
 [6]: https://github.com/markkrijgsman/pubsub-integration-testing
 [7]: http://localhost:8080/swagger-ui.html
-[8]: https://hub.docker.com/repository/docker/markkrijgsman/pubsub
+[8]: https://hub.docker.com/r/markkrijgsman/pubsub/dockerfile
