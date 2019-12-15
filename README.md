@@ -10,7 +10,8 @@ or it will use you personal user account credentials and publish messages to top
 Both situations are not desirable. 
 
 In this article, I will first describe how to Dockerize Pub/Sub, followed by the changes required in your application. 
-__If you want to dive right into the code, [go here][6].__
+__If you want to dive right into the code, [go here][6].__ 
+You can also find a prebuilt Docker image [here][8].  
 
 ### Dockerizing the Pub/Sub server
 
@@ -76,6 +77,7 @@ docker build . -t pubsub
 
 docker run  --name pubsub \
             -p 8432:8432 \
+            -e PUBSUB_PROJECT_ID=my-gcp-project \
             -e PUBSUB_CONFIG='[{"name": "my-topic", "subscriptions": ["my-subscription"]}]' \
             -d pubsub
 
@@ -179,3 +181,4 @@ or checkout this [Pub/Sub integration test](src/test/java/nl/luminis/articles/pu
 [5]: https://cloud.google.com/pubsub/docs/emulator
 [6]: https://github.com/markkrijgsman/pubsub-integration-testing
 [7]: http://localhost:8080/swagger-ui.html
+[8]: https://hub.docker.com/repository/docker/markkrijgsman/pubsub
