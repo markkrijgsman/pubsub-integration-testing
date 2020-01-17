@@ -172,7 +172,7 @@ The table below shows the different scenarios that you can have when working wit
 | GCP                    | GCP                | pubsub.googleapis.com | SERVICE_ACCOUNT              | /path/to/credentials.json              |
 
 You can also run the [Application.java](src/main/java/nl/luminis/articles/pubsub/Application.java) and publish a message with the use of the [Swagger UI][7]
-or checkout this [Pub/Sub integration test](src/test/java/nl/luminis/articles/pubsub/PubSubIT).
+or checkout this [Pub/Sub integration test](src/test/java/nl/luminis/articles/pubsub/PubSubIT.java).
 
 [1]: https://cloud.google.com
 [2]: https://cloud.google.com/pubsub/docs/overview
