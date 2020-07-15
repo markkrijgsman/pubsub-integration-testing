@@ -5,8 +5,6 @@ if [[ -z "${PUBSUB_PROJECT_ID}" ]]; then
   export PUBSUB_PROJECT_ID=gcp-docker-project
 fi
 
-export PUBSUB_EMULATOR_HOST=localhost:8432
-
 # Start the emulator in the background so that we can continue the script to create topics and subscriptions.
 gcloud beta emulators pubsub start --host-port=0.0.0.0:8432 &
 PUBSUB_PID=$!

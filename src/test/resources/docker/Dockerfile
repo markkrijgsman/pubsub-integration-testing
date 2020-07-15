@@ -9,6 +9,7 @@ RUN git clone https://github.com/GoogleCloudPlatform/python-docs-samples.git /py
 RUN mkdir -p /root/bin
 COPY start-pubsub.sh pubsub-configuration-parser.py /root/bin/
 
+ENV PUBSUB_EMULATOR_HOST=localhost:8432
 EXPOSE 8432
 
 CMD ["./root/bin/start-pubsub.sh"]
