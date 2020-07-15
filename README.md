@@ -23,29 +23,25 @@ Our [Dockerfile](src/test/resources/docker/Dockerfile) is as follows:
 ```
 FROM google/cloud-sdk:272.0.0
 
-RUN git clone https://github.com/GoogleCloudPlatform/python-docs-samples.git /python-docs-samples && \
-    cd /python-docs-samples/pubsub/cloud-client && \
-    pip install -r requirements.txt
-
+RUN pip install google-cloud-pubsub==1.6.1
 RUN mkdir -p /root/bin
-COPY start-pubsub.sh pubsub-configuration-parser.py /root/bin/
 
+COPY start-pubsub.sh pubsub-client.py /root/bin/
+
+ENV PUBSUB_EMULATOR_HOST=localhost:8432
 EXPOSE 8432
 
 CMD ["./root/bin/start-pubsub.sh"]
 ``` 
 
-As per the emulator's installation instructions, we clone the Google repository and install the Pub/Sub requirements.
-Afterwards, we execute [start-pubsub.sh](src/test/resources/docker/start-pubsub.sh):
+We first install the Pub/Sub dependencies. Afterwards, we execute [start-pubsub.sh](src/test/resources/docker/start-pubsub.sh):
 ```
 #!/bin/bash
 
 if [[ -z "${PUBSUB_PROJECT_ID}" ]]; then
-  echo "No PUBSUB_PROJECT_ID supplied, setting default project name"
-  export PUBSUB_PROJECT_ID=gcp-docker-project
+  echo "No PUBSUB_PROJECT_ID supplied, setting default of docker-gcp-project"
+  export PUBSUB_PROJECT_ID=docker-gcp-project
 fi
-
-export PUBSUB_EMULATOR_HOST=localhost:8432
 
 # Start the emulator in the background so that we can continue the script to create topics and subscriptions.
 gcloud beta emulators pubsub start --host-port=0.0.0.0:8432 &
@@ -54,12 +50,13 @@ PUBSUB_PID=$!
 if [[ -z "${PUBSUB_CONFIG}" ]]; then
   echo "No PUBSUB_CONFIG supplied, no additional topics or subscriptions will be created"
 else
-  python /root/bin/pubsub-configuration-parser.py ${PUBSUB_PROJECT_ID} "${PUBSUB_CONFIG}"
+  echo "Creating topics and subscriptions"
+  python /root/bin/pubsub-client.py create ${PUBSUB_PROJECT_ID} "${PUBSUB_CONFIG}"
 fi
 
 # After these actions we bring the process back to the foreground again and wait for it to complete.
 # This restores Docker's expected behaviour of coupling the lifecycle of the Docker container to the primary process.
-echo "Ready"
+echo "[pubsub] Ready"
 wait ${PUBSUB_PID}
 ```    
 
@@ -67,7 +64,7 @@ This script indicates that we can provide the Docker container with two optional
 * `PUBSUB_PROJECT_ID`: GCP project ID
 * `PUBSUB_CONFIG`: a JSON array that describes the topics and associated subscriptions you want to create. 
  
-With this script, we start the Pub/Sub server at http://localhost:8432 and execute a simple Python script ([pubsub-configuration-parser.py](src/test/resources/docker/pubsub-configuration-parser.py)) that interprets the JSON object.
+With this script, we start the Pub/Sub server at http://localhost:8432 and execute a simple Python script ([pubsub-client.py](src/test/resources/docker/pubsub-client.py)) that interprets the JSON object.
 
 Building and running the Dockerfile can be done as follows:
 ```
@@ -82,6 +79,15 @@ docker run  --name pubsub \
             -d pubsub
 
 docker logs -f pubsub 
+```
+
+Once you have the Pub/Sub server running you can publish and receive messages for debugging purposes with the following commands:
+```
+docker exec -it pubsub /bin/bash
+# The following executes within the Docker container
+cd /root/bin
+python pubsub-client.py publish $PUBSUB_PROJECT_ID my-topic my-message-content 
+python pubsub-client.py receive $PUBSUB_PROJECT_ID my-subscription
 ```
 
 ### Making the application configurable

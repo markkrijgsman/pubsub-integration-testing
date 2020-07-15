@@ -1,13 +1,9 @@
 FROM google/cloud-sdk:272.0.0
 
-# Yes, this is actually the Google recommended best practice:
-# https://cloud.google.com/pubsub/docs/emulator
-RUN git clone https://github.com/GoogleCloudPlatform/python-docs-samples.git /python-docs-samples && \
-    cd /python-docs-samples/pubsub/cloud-client && \
-    pip install -r requirements.txt
-
+RUN pip install google-cloud-pubsub==1.6.1
 RUN mkdir -p /root/bin
-COPY start-pubsub.sh pubsub-configuration-parser.py /root/bin/
+
+COPY start-pubsub.sh pubsub-client.py /root/bin/
 
 ENV PUBSUB_EMULATOR_HOST=localhost:8432
 EXPOSE 8432

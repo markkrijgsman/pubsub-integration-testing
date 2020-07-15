@@ -11,7 +11,7 @@ public class TestContainerFactory {
         return new GenericContainer(new ImageFromDockerfile()
             .withFileFromClasspath("Dockerfile", "docker/Dockerfile")
             .withFileFromClasspath("start-pubsub.sh", "docker/start-pubsub.sh")
-            .withFileFromClasspath("pubsub-configuration-parser.py", "docker/pubsub-configuration-parser.py"))
+            .withFileFromClasspath("pubsub-client.py", "docker/pubsub-client.py"))
             .withExposedPorts(PUBSUB_PORT)
             .withEnv("PUBSUB_PROJECT_ID", "my-gcp-project")
             .withEnv("PUBSUB_CONFIG", "[{\"name\": \"my-topic\", \"subscriptions\": [\"my-subscription\"]}]");
