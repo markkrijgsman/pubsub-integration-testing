@@ -66,7 +66,6 @@ def receive(project_id, subscription_id, timeout=None):
 
 if __name__ == "__main__":
     if sys.argv[1] == "create":
-        print("Creating topics and subscriptions")
         create_topics_and_subscriptions(sys.argv[2], sys.argv[3])
     elif sys.argv[1] == "publish":
         publish(sys.argv[2], sys.argv[3], sys.argv[4])

@@ -52,6 +52,9 @@ if [[ -z "${PUBSUB_CONFIG}" ]]; then
 else
   echo "Creating topics and subscriptions"
   python /root/bin/pubsub-client.py create ${PUBSUB_PROJECT_ID} "${PUBSUB_CONFIG}"
+  if [ $? -eq 1 ]; then
+    exit 1
+  fi
 fi
 
 # After these actions we bring the process back to the foreground again and wait for it to complete.
