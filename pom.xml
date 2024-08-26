@@ -23,7 +23,7 @@
 
         <!-- Dependency versions -->
         <version.com.google.cloud>1.102.0</version.com.google.cloud>
-        <version.io.springfox.swagger2>2.9.2</version.io.springfox.swagger2>
+        <version.io.springfox.swagger2>2.10.0</version.io.springfox.swagger2>
         <version.org.awaitility>4.0.1</version.org.awaitility>
         <version.org.projectlombok.lombok>1.18.10</version.org.projectlombok.lombok>
         <version.org.testcontainers>1.12.4</version.org.testcontainers>
